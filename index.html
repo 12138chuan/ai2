@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>姚佳男 · 苏州大学 2026 级人工智能</title>
+<meta name="description" content="姚佳男的个人主页：苏州大学 2026 级人工智能专业。作品：小 P 的 MLP 大冒险、多层感知机可视化讲解。" />
+<meta name="author" content="姚佳男" />
+<link rel="stylesheet" href="assets/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%2314161A'/><text x='50' y='68' font-size='52' font-family='sans-serif' font-weight='700' fill='%23FBFAF7' text-anchor='middle'>姚</text></svg>" />
+</head>
+<body>
+
+<header class="nav">
+  <a class="mark" href="#top">
+    <span class="mark-dot"></span>
+    姚佳男
+  </a>
+  <nav class="nav-links">
+    <a href="#work">作品</a>
+    <a href="#about">关于</a>
+    <a class="nav-cta" href="mlp-quest/index.html">MLP 小站 ↗</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ========== 首屏 ========== -->
+  <section class="hero">
+    <p class="eyebrow">苏州大学 · 2026 级 · 人工智能</p>
+
+    <h1>姚佳男</h1>
+
+    <div class="actions">
+      <a class="btn btn-primary" href="mlp-quest/index.html">
+        玩一下我的 MLP 小站
+        <span class="arrow">→</span>
+      </a>
+      <a class="btn btn-ghost" href="#work">看看作品</a>
+    </div>
+
+    <ul class="meta">
+      <li><b>1</b> 个作品</li>
+      <li><b>2026</b> 级</li>
+      <li>苏州 · 中国</li>
+    </ul>
+  </section>
+
+  <!-- ========== 作品 ========== -->
+  <section class="section" id="work">
+    <div class="sec-head">
+      <h2>作品</h2>
+      <span class="sec-note">在浏览器里直接跑，无需安装</span>
+    </div>
+
+    <div class="cards">
+
+      <a class="card" href="mlp-quest/index.html">
+        <div class="thumb">
+          <img src="assets/thumb-quest.jpg" alt="小 P 的 MLP 大冒险 首页截图" loading="lazy" />
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <h3>小 P 的 MLP 大冒险</h3>
+            <span class="card-arrow">↗</span>
+          </div>
+          <p>5 个关卡的 MLP 科普小游戏：调神经元、长隐藏层、打赢过拟合怪。所有曲线都是真训练出来的。</p>
+          <ul class="tags">
+            <li>交互</li>
+            <li>可视化</li>
+            <li>教学</li>
+          </ul>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== 关于 ========== -->
+  <section class="section" id="about">
+    <div class="sec-head">
+      <h2>关于</h2>
+    </div>
+
+    <div class="about-grid">
+      <dl class="facts">
+        <div><dt>学校</dt><dd>苏州大学</dd></div>
+        <div><dt>专业</dt><dd>人工智能</dd></div>
+        <div><dt>年级</dt><dd>2026 级</dd></div>
+        <div><dt>学号</dt><dd class="mono">2662404078</dd></div>
+      </dl>
+
+      <div class="about-text">
+        <p>大一，正在学 PyTorch 和前端。</p>
+        <p>相信一件事：能讲清楚，才算真懂。</p>
+        <p class="dim">主页和这个小站都是自己写的，纯静态、零依赖，不加载任何外部文件。</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>© 2026 姚佳男</span>
+  <span class="dot">·</span>
+  <span>苏州大学《人工智能通识》课程作业</span>
+</footer>
+
+<script>
+  // 元素进入视口时淡入（无依赖）
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("in")),
+    { threshold: 0.15 }
+  );
+  document.querySelectorAll(".card, .section, .hero > *").forEach((el) => {
+    el.classList.add("reveal");
+    io.observe(el);
+  });
+</script>
+
+</body>
+</html>

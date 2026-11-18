@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>小 P 的 MLP 大冒险 · 姚佳男</title>
+<meta name="description" content="一个用闯关游戏讲多层感知机（MLP）的网站：直线挑战、神经元调音台、长层实验、知识问答、过拟合怪。" />
+<meta name="author" content="姚佳男" />
+<link rel="stylesheet" href="assets/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='52' r='38' fill='%23FFE08A' stroke='%2314110F' stroke-width='6'/><circle cx='38' cy='46' r='6' fill='%2314110F'/><circle cx='62' cy='46' r='6' fill='%2314110F'/><path d='M40 62 q10 9 20 0' stroke='%2314110F' stroke-width='5' fill='none' stroke-linecap='round'/></svg>" />
+</head>
+<body>
+
+<!-- ================= 彩带 ================= -->
+<canvas id="confetti" class="confetti"></canvas>
+
+<!-- ================= 顶部 HUD ================= -->
+<header class="hud">
+  <a class="hud-logo" href="#top">
+    <span class="logo-dot"></span>
+    MLP<span class="logo-thin">QUEST</span>
+  </a>
+
+  <nav class="hud-nav" id="hudNav">
+    <a href="#lv1" data-lv="1"><b>01</b>直线</a>
+    <a href="#lv2" data-lv="2"><b>02</b>调音台</a>
+    <a href="#lv3" data-lv="3"><b>03</b>长层</a>
+    <a href="#lv4" data-lv="4"><b>04</b>问答</a>
+    <a href="#lv5" data-lv="5"><b>05</b>怪物</a>
+  </nav>
+
+  <div class="hud-right">
+    <div class="xp">
+      <span class="xp-label">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
+      <span class="xp-num" id="xpText">0 / 120</span>
+    </div>
+    <button class="icon-btn" id="soundBtn" aria-label="音效开关" title="音效开关">🔊</button>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="hero-dots-bg"></div>
+
+  <div class="hero-copy">
+    <p class="kicker"><span class="kicker-dot"></span>多层感知机 · 闯关小课堂</p>
+
+    <h1>
+      小 P 想学会<br />
+      <span class="hl hl-blue">分开两弯月亮</span>
+    </h1>
+
+    <p class="hero-sub">
+      小 P 是一个神经元。它只有 3 个参数，手里只有一根<strong>直尺</strong>。
+      带它闯过 5 关，你就把 MLP 玩明白了。
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn btn-primary" id="startBtn" href="#lv1">开始闯关 →</a>
+      <a class="btn btn-ghost" href="#lv3">直接看它变强</a>
+    </div>
+
+    <ul class="chips">
+      <li>5 关</li>
+      <li>120 XP</li>
+      <li>0 依赖 · 0 后端</li>
+      <li>约 8 分钟</li>
+    </ul>
+  </div>
+
+  <div class="hero-mascot">
+    <div class="bubble" id="heroBubble">我叫小 P，参数只有 3 个……<br />但我很想变强！</div>
+    <div class="mascot mascot--lg" id="heroMascot" data-mood="idle"></div>
+    <div class="nameplate">小 P · 一个还没长大的感知机</div>
+  </div>
+</section>
+
+<!-- ================= 序章 ================= -->
+<section class="story" id="story">
+  <div class="story-card">
+    <p class="story-tag">序章</p>
+    <p class="story-text">
+      小 P 的任务很朴素：把一堆点分成蓝和粉两类。它每看到一个点，就算一个加权和，
+      过一下激活函数，然后说“这边”或“那边”。<strong>几何上，它只能画一条直线。</strong>
+    </p>
+    <p class="story-text">
+      而现实里的数据——比如两弯互相抱住的月亮——根本没法用一条直线分开。
+      于是故事开始于一个失败的下午。
+    </p>
+    <div class="story-stickers">
+      <span class="sticker s-yellow">神经元 = 加权和 + 非线性</span>
+      <span class="sticker s-blue">单层 = 一条直线</span>
+      <span class="sticker s-pink">MLP = 很多层，很多弯</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LV.01 ================= -->
+<section class="level" id="lv1">
+  <div class="level-head">
+    <span class="lv-tag">LV.01</span>
+    <h2>你只有一根直尺</h2>
+    <span class="lv-state" data-state-for="1">未通关</span>
+  </div>
+  <p class="level-sub">
+    蓝点是 A 类，粉点是 B 类。<strong>拖动画面</strong>平移直尺，用滑块调角度，尽量把它们分开。
+  </p>
+
+  <div class="game-grid">
+    <div class="stage">
+      <canvas id="c1" width="720" height="540"></canvas>
+      <div class="stage-legend">
+        <span><i class="dot dot-a"></i>A 类</span>
+        <span><i class="dot dot-b"></i>B 类</span>
+        <span><i class="dot dot-x">×</i>分错的</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="scoreboard">
+        <div class="sb-item">
+          <span>分错</span>
+          <b id="missCount" class="mono">0</b>
+          <em>个点</em>
+        </div>
+        <div class="sb-item">
+          <span>最少可能</span>
+          <b class="mono" id="missBest">—</b>
+          <em>个点</em>
+        </div>
+      </div>
+
+      <label class="ctrl">
+        <span>直尺角度 <b class="mono" id="angleVal">0°</b></span>
+        <input type="range" id="angle" min="0" max="180" step="1" value="0" />
+      </label>
+
+      <div class="hint" id="lv1Hint">试着让分错数变成 0 —— 你会发现它不肯归零。</div>
+
+      <button class="btn btn-danger" id="giveUp">我认输，告诉我为什么</button>
+
+      <div class="insight" id="lv1Insight" hidden>
+        <h3>为什么怎么转都不行</h3>
+        <p>
+          两弯月亮是<strong>线性不可分</strong>的：任何一个方向切下去，都必然有一块被切错。
+          这就是单个神经元的表达上限。
+        </p>
+        <p>
+          要分开它们，边界得<strong>弯</strong>起来。而弯 = 非线性 + 多层。
+          下一关，我们就给小 P 加零件。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LV.02 ================= -->
+<section class="level level-alt" id="lv2">
+  <div class="level-head">
+    <span class="lv-tag">LV.02</span>
+    <h2>神经元调音台</h2>
+    <span class="lv-state" data-state-for="2">未通关</span>
+  </div>
+  <p class="level-sub">
+    输入固定为 <span class="mono">x₁ = 1.0</span>、<span class="mono">x₂ = 0.5</span>。
+    调权重和偏置，让兴奋度 <span class="mono">a ≥ 0.90</span>，小 P 就能举起杠铃。
+  </p>
+
+  <div class="mixer">
+    <div class="mixer-panel">
+      <div class="formula-strip">
+        <span class="fx">z = w₁x₁ + w₂x₂ + b</span>
+        <span class="fx dim">a = σ(z) = 1 / (1 + e<sup>−z</sup>)</span>
+      </div>
+
+      <label class="ctrl">
+        <span>w₁ <b class="mono" id="w1v">1.00</b></span>
+        <input type="range" id="w1" min="-4" max="4" step="0.05" value="1" />
+      </label>
+      <label class="ctrl">
+        <span>w₂ <b class="mono" id="w2v">1.00</b></span>
+        <input type="range" id="w2" min="-4" max="4" step="0.05" value="1" />
+      </label>
+      <label class="ctrl">
+        <span>b <b class="mono" id="bv">0.00</b></span>
+        <input type="range" id="bb" min="-4" max="4" step="0.05" value="0" />
+      </label>
+
+      <div class="readout">
+        <div><span class="ro-k">z</span><b class="mono" id="mixZ">1.50</b></div>
+        <div><span class="ro-k">a</span><b class="mono" id="mixA">0.82</b></div>
+      </div>
+    </div>
+
+    <div class="mixer-stage">
+      <div class="gauge">
+        <div class="gauge-track">
+          <div class="gauge-fill" id="mixBar"></div>
+          <div class="gauge-target"><span>0.90</span></div>
+        </div>
+        <p class="gauge-cap">兴奋度 a</p>
+      </div>
+      <div class="mascot mascot--md" id="mixMascot" data-mood="confused"></div>
+      <p class="mixer-status" id="mixStatus">还差点火候……</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LV.03 ================= -->
+<section class="level" id="lv3">
+  <div class="level-head">
+    <span class="lv-tag">LV.03</span>
+    <h2>给它长出隐藏层</h2>
+    <span class="lv-state" data-state-for="3">未通关</span>
+  </div>
+  <p class="level-sub">
+    这一关是<strong>同心圆</strong>：内圈 A 类，外圈 B 类。一条直线最多只能答对一半——
+    除非小 P 学会把中间“围”起来。
+  </p>
+
+  <div class="game-grid">
+    <div class="stage">
+      <canvas id="c3" width="720" height="540"></canvas>
+      <div class="stage-legend">
+        <span><i class="dot dot-a"></i>A 类（内圈）</span>
+        <span><i class="dot dot-b"></i>B 类（外圈）</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="scoreboard">
+        <div class="sb-item">
+          <span>训练集得分</span>
+          <b id="acc3" class="mono">—</b>
+          <em>%</em>
+        </div>
+        <div class="sb-item">
+          <span>参数量</span>
+          <b id="par3" class="mono">—</b>
+          <em>个</em>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="train3">训练小 P</button>
+        <button class="btn btn-ghost" id="linear3">换成纯线性</button>
+      </div>
+      <button class="btn btn-tiny" id="reset3">重置</button>
+
+      <div class="hint" id="lv3Hint">
+        深网络：2 → 8 → 8 → 2。点「训练小 P」，看边界从直线变成一圈。
+      </div>
+
+      <div class="compare" id="compare3" hidden>
+        <h3>成绩单</h3>
+        <div class="cmp-row"><span>深网络 <em>2-8-8-2</em></span><b class="mono good" id="cmpDeep">—</b></div>
+        <div class="cmp-row"><span>纯线性 <em>2-2</em></span><b class="mono bad" id="cmpLin">—</b></div>
+        <p class="cmp-note">同样训练 300 轮，加了隐藏层才可能把圆“包”起来。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LV.04 ================= -->
+<section class="level level-alt" id="lv4">
+  <div class="level-head">
+    <span class="lv-tag">LV.04</span>
+    <h2>三道快问快答</h2>
+    <span class="lv-state" data-state-for="4">未通关</span>
+  </div>
+  <p class="level-sub">答错不扣分，会给你一句解释。全对拿 30 XP。</p>
+
+  <div class="quiz" id="quiz"></div>
+</section>
+
+<!-- ================= LV.05 ================= -->
+<section class="level" id="lv5">
+  <div class="level-head">
+    <span class="lv-tag">LV.05</span>
+    <h2>决战 · 过拟合怪</h2>
+    <span class="lv-state" data-state-for="5">未通关</span>
+  </div>
+  <p class="level-sub">
+    怪物偷偷把训练集里 <strong>15% 的标签贴反了</strong>。小 P 练得越久，就越相信这些错标签——
+    训练场分数一路涨，考场分数却在掉。
+  </p>
+
+  <div class="boss-grid">
+    <div class="stage stage-chart">
+      <canvas id="c5" width="760" height="380"></canvas>
+      <div class="stage-legend">
+        <span><i class="line line-train"></i>训练场</span>
+        <span><i class="line line-test"></i>考场</span>
+        <span class="legend-note">横轴＝训练轮次</span>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="monster-wrap">
+        <div class="monster" id="monster" data-level="0">
+          <svg viewBox="0 0 140 140" aria-hidden="true">
+            <path d="M70 12 L86 34 L114 26 L108 54 L132 66 L112 88 L124 116 L96 110 L82 134 L62 112 L38 128 L34 100 L10 92 L26 68 L12 44 L40 46 L54 20 Z"
+                  fill="#B9A7FF" stroke="#14110F" stroke-width="5" stroke-linejoin="round"/>
+            <circle cx="54" cy="66" r="9" fill="#14110F"/>
+            <circle cx="88" cy="66" r="9" fill="#14110F"/>
+            <path d="M48 52 l14 6 M94 52 l-14 6" stroke="#14110F" stroke-width="5" stroke-linecap="round"/>
+            <path d="M52 92 q18 -10 36 0" stroke="#14110F" stroke-width="5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="monster-name">过拟合怪</p>
+      </div>
+
+      <div class="scoreboard two">
+        <div class="sb-item">
+          <span>训练场</span>
+          <b class="mono" id="tr5">—</b>
+        </div>
+        <div class="sb-item">
+          <span>考场</span>
+          <b class="mono" id="te5">—</b>
+        </div>
+      </div>
+      <div class="gap-bar">
+        <span>差距 gap</span>
+        <div class="gap-track"><div class="gap-fill" id="gapFill"></div></div>
+        <b class="mono" id="gap5">—</b>
+      </div>
+
+      <label class="switch">
+        <input type="checkbox" id="earlyStop" />
+        <span class="switch-ui"></span>
+        <span class="switch-text">
+          <b>早停（Early Stopping）</b>
+          <em>留一部分数据当验证集，成绩不再涨就收手</em>
+        </span>
+      </label>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="train5">放它去练</button>
+        <button class="btn btn-ghost" id="reset5">重来</button>
+      </div>
+
+      <div class="hint" id="lv5Hint">先不开早停，看看考场分数会长什么样。</div>
+    </div>
+  </div>
+
+  <div class="boss-tip">
+    <strong>打赢它的条件：</strong>考场 ≥ 90% 且 训练场与考场的差距 ≤ 6%。
+  </div>
+</section>
+
+<!-- ================= 结局 ================= -->
+<section class="finale" id="finale">
+  <div class="cert" id="cert">
+    <p class="cert-kicker">MLP 小学 · 结业证明</p>
+    <h2 id="certTitle">再闯几关就能毕业了</h2>
+    <p class="cert-text" id="certText">把小 P 从“只会画直线”带到“能打赢过拟合怪”。</p>
+
+    <div class="cert-grid">
+      <div><span>姓名</span><b>姚佳男</b></div>
+      <div><span>学号</span><b class="mono">2662404078</b></div>
+      <div><span>专业</span><b>人工智能</b></div>
+      <div><span>年级</span><b>2026 级</b></div>
+    </div>
+
+    <div class="badges" id="badges">
+      <span class="badge" data-badge="1">直线挑战</span>
+      <span class="badge" data-badge="2">调音台</span>
+      <span class="badge" data-badge="3">长层实验</span>
+      <span class="badge" data-badge="4">问答</span>
+      <span class="badge" data-badge="5">过拟合怪</span>
+    </div>
+
+    <div class="cert-score">
+      <span>总经验</span>
+      <b class="mono" id="certXp">0 / 120</b>
+    </div>
+
+    <div class="cert-actions">
+      <button class="btn btn-ghost" id="restart">重置进度</button>
+      <a class="btn btn-primary" href="#top">回到开头 ↑</a>
+    </div>
+
+    <p class="cert-foot">苏州大学 · 《人工智能通识》课程作业</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <p>姚佳男 · 苏州大学 2026 级 人工智能 · 学号 2662404078</p>
+  <p class="foot-dim">本页所有计算都在你的浏览器里本地完成，不上传任何数据。小 P 是虚构角色，但它的数学是真的。</p>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
